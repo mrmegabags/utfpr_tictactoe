@@ -13,15 +13,9 @@ In this version of Tic-Tac-Toe, we have:
 
 To run the game:
 
-```bash
-elixir run.exs
-```
+- Generate utfpr_tictactoe using mix escript
+- Run utfpr_tictactoe
 
-Or using Mix:
-
-```bash
-mix run -e "UtfprTictactoe.main()"
-```
 
 ### How to Play
 
@@ -56,6 +50,12 @@ mix run -e "UtfprTictactoe.main()"
 2. **O plays on (1,1)** — O overwrites X — ✅ valid move  
 3. **+ plays on (3,3)** — + on empty cell — ✅ valid move  
 4. **X plays on (2,2)** — X on empty cell — ✅ valid move  
-5. **O plays on (2,2)** — O overwrites X — ✅ valid move  
+5. **O plays on (2,2)** — O overwrites X — ✅ valid move
+
+### When does the game end?
+
+#### A player wins
+
+#### There is a tie
 6. **+ plays on (2,2)** — + overwrites O — ✅ valid move  
 1. **X plays on (1,1)** — ❌ invalid move: X is retaliating against O’s overwrite in move 5, violating the anti-revenge rule
