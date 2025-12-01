@@ -10,20 +10,31 @@ defmodule Game do
   end
 
   defp play(players, board) do
-    [current_player | rest] = players
+    case Board.game_status(board) do
+      {:win, winner} ->
+        IO.puts("\nGame over! Player #{Atom.to_string(winner)} wins!")
+        board
 
-    IO.puts("Current board")
-    IO.puts(Board.display_board(board))
+      :draw ->
+        IO.puts("\nGame over! It's a draw.")
+        board
 
-    IO.puts("In what position (line, column) do you want to play, player #{current_player}?")
-    {line, column} = process_input_string(IO.gets("Choose between (1,1) and (4,4): "))
+      :ongoing ->
+        [current_player | rest] = players
 
-    if line in 1..4 and column in 1..4 do
-      new_board = Board.play(board, Player.new(current_player, 999), (line - 1) * 4 + column)
-      play(rest ++ [current_player], new_board)
-    else
-      IO.puts("Wrong position!")
-      play(players, board)
+        IO.puts("Current board")
+        IO.puts(Board.display_board(board))
+
+        IO.puts("In what position (line, column) do you want to play, player #{current_player}?")
+        {line, column} = process_input_string(IO.gets("Choose between (1,1) and (4,4): "))
+
+        if line in 1..4 and column in 1..4 do
+          new_board = Board.play(board, Player.new(current_player, 999), (line - 1) * 4 + column)
+          play(rest ++ [current_player], new_board)
+        else
+          IO.puts("Wrong position!")
+          play(players, board)
+        end
     end
   end
 

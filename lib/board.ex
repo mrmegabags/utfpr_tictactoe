@@ -3,33 +3,8 @@ defmodule Board do
 
   def new() do
     %Board{
-      cells: [
-        " ",
-        " ",
-        " ",
-        " ",
-        " ",
-        " ",
-        " ",
-        " ",
-        " ",
-        " ",
-        " ",
-        " ",
-        " ",
-        " ",
-        " ",
-        " "
-      ],
+      cells: List.duplicate(" ", 16),
       previous_steal: %{}
-    }
-  end
-
-  defp update_board(%Board{cells: cells, previous_steal: previous_steal} = board, symbol, idx) do
-    %Board{
-      board
-      | cells: List.replace_at(cells, idx, symbol),
-        previous_steal: Map.put(previous_steal, symbol, nil)
     }
   end
 
@@ -83,6 +58,63 @@ defmodule Board do
             # TODO We cannot put nil here. What we have must remain there
         }
     end
+  end
+
+  def game_status(%Board{cells: cells}) do
+    case winning_symbol(cells) do
+      nil ->
+        if Enum.any?(cells, &(&1 == " ")) do
+          :ongoing
+        else
+          :draw
+        end
+
+      winner ->
+        {:win, winner}
+    end
+  end
+
+  defp update_board(%Board{cells: cells, previous_steal: previous_steal} = board, symbol, idx) do
+    %Board{
+      board
+      | cells: List.replace_at(cells, idx, symbol),
+        previous_steal: Map.put(previous_steal, symbol, nil)
+    }
+  end
+
+  # Checks all possible winning lines and returns the symbol that wins, or nil.
+  defp winning_symbol(cells) do
+    winning_lines = [
+      # rows
+      [0, 1, 2, 3],
+      [4, 5, 6, 7],
+      [8, 9, 10, 11],
+      [12, 13, 14, 15],
+      # columns
+      [0, 4, 8, 12],
+      [1, 5, 9, 13],
+      [2, 6, 10, 14],
+      [3, 7, 11, 15],
+      # diagonals
+      [0, 5, 10, 15],
+      [3, 6, 9, 12]
+    ]
+
+    winning_lines
+    |> Enum.find_value(fn [a, b, c, d] ->
+      [s1, s2, s3, s4] = [
+        Enum.at(cells, a),
+        Enum.at(cells, b),
+        Enum.at(cells, c),
+        Enum.at(cells, d)
+      ]
+
+      cond do
+        s1 == " " -> nil
+        s1 == s2 and s2 == s3 and s3 == s4 -> s1
+        true -> nil
+      end
+    end)
   end
 
   defp convert_symbol_to_string(cell) do
